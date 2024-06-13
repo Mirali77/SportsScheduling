@@ -11,28 +11,28 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>SportsScheduling</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="lightTab">
        <attribute name="title">
-        <string>Лёгкое</string>
+        <string>Задача 1</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="mediumTab">
        <attribute name="title">
-        <string>Среднее</string>
+        <string>Задача 2</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="heavyTab">
        <attribute name="title">
-        <string>Тяжёлое</string>
+        <string>Задача 3</string>
        </attribute>
       </widget>
      </widget>

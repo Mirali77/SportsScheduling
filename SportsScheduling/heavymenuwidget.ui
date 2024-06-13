@@ -52,18 +52,25 @@
    </item>
    <item>
     <widget class="QWidget" name="widget_10" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,1">
+     <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,1,1">
       <item>
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QCheckBox" name="checkBox">
         <property name="text">
-         <string>Шаг1</string>
+         <string>Отрисовка</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButton_2">
+       <widget class="QCheckBox" name="checkBox_3">
         <property name="text">
-         <string>Шаг2</string>
+         <string>Шаг 1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_2">
+        <property name="text">
+         <string>Шаг 2</string>
         </property>
        </widget>
       </item>

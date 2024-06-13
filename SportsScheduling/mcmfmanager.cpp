@@ -1,4 +1,4 @@
-#include "mcmfmanager.h"
+    #include "mcmfmanager.h"
 
 MCMFManager::MCMFManager(int sn, ll c_inf) { n = sn; inf = c_inf; adj.resize(n); pot.resize(n); dist.resize(n); used.resize(n); from.resize(n, -1); }
 

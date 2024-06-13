@@ -12,6 +12,7 @@
 #include <random>
 #include <cmath>
 #include <QDebug>
+#include <QTime>
 
 using namespace std;
 
@@ -37,9 +38,11 @@ private slots:
 
     void on_pushButton_2_clicked();
 
-    void on_radioButton_clicked();
+    void on_checkBox_stateChanged(int arg1);
 
-    void on_radioButton_2_clicked();
+    void on_checkBox_3_stateChanged(int arg1);
+
+    void on_checkBox_2_stateChanged(int arg1);
 
 private:
     Ui::HeavyMenuWidget *ui;
@@ -48,11 +51,14 @@ private:
     vector<ll> cost;
     ll alpha, beta;
     GraphGenerator* graphGenerator;
-    int n, m, tn, f, cnt = 0;
-    bool sa_flag, move_state;
+    int n, m, tn, cnt = 0;
+    ll f = 0;
+    bool sa_flag, move_1, move_2, drawing;
+    int currentMoveType = 0;
     random_device rd;
     mt19937 gen;
     QTimer* timer;
+    QTime tick;
 signals:
     void initGraphSignal(int n);
     void setGraphSignal(vector<vector<int>> graph);

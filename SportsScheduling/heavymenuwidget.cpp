@@ -8,13 +8,17 @@ HeavyMenuWidget::HeavyMenuWidget(QWidget *parent) :
     ui->setupUi(this);
     graphGenerator = new GraphGenerator();
     alpha = beta = f = cnt = 0;
-    sa_flag = move_state = false;
-    ui->radioButton->setChecked(true);
+    sa_flag = move_1 = move_2 = drawing = false;
+    currentMoveType = 0;
+    ui->checkBox->setChecked(true);
+    ui->checkBox_2->setChecked(true);
+    ui->checkBox_3->setChecked(true);
     gen = mt19937(rd());
     simulatedAnnealing();
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &HeavyMenuWidget::simulatedAnnealing);
-    timer->start(100);
+    timer->start(10);
+    tick = QTime::currentTime();
 }
 
 HeavyMenuWidget::~HeavyMenuWidget()
@@ -42,7 +46,8 @@ void HeavyMenuWidget::on_pushButton_clicked()
     for(int i = 0; i < m; i++) fin >> cost[i];
 
     graph = vector<vector<int>>(n, vector<int>(n));
-    emit initGraphSignal(n);
+    //if (!drawing) qDebug() << "lol";
+    if (drawing) emit initGraphSignal(n);
 
     setBestF(0);
 
@@ -89,12 +94,21 @@ void HeavyMenuWidget::simulatedAnnealing()
     if (!sa_flag) {
         return;
     }
+    if (-f == 50404381LL) {
+        auto get_ms = [&](QTime tm) {
+            return (ll)tm.minute() * 60 * 1000 + (ll)tm.second() * 1000 + tm.msec();
+        };
+        qDebug() << get_ms(QTime::currentTime()) - get_ms(tick);
+    }
     long double temp = stold(ui->lineTemp->text().toStdString());
     long double cooling = stold(ui->lineCool->text().toStdString());
     temp *= cooling;
     cnt++;
     ui->lineTemp->setText(QString::fromStdString(to_string(temp)));
-    if (!move_state) {
+    if (currentMoveType == 0) {
+        currentMoveType ^= 1;
+        if (!move_1) {return;}
+        currentMoveType ^= 1;
         int i = gen() % n, j;
         while ((j = gen() % n) == i) continue;
         for(int mid = 0; mid < n; mid++) {
@@ -104,12 +118,12 @@ void HeavyMenuWidget::simulatedAnnealing()
         ll nf = calc_func();
         if (nf < f) {
             updateF(-nf), f = nf;
-            emit setGraphSignal(graph);
+            if (drawing) emit setGraphSignal(graph);
             return;
         }
-        if (temp != 0 && gen() / gen.max() < exp((f - nf) / temp)) {
+        if (temp != 0 && (long double)gen() / gen.max() < exp((f - nf) / temp)) {
             updateF(-nf), f = nf;
-            emit setGraphSignal(graph);
+            if (drawing) emit setGraphSignal(graph);
             return;
         }
         for(int mid = 0; mid < n; mid++) {
@@ -118,6 +132,9 @@ void HeavyMenuWidget::simulatedAnnealing()
         }
     }
     else {
+        currentMoveType ^= 1;
+        if (!move_2) {return;}
+        currentMoveType ^= 1;
         int ti = gen() % tn, tj;
         while ((tj = gen() % tn) == ti) continue;
         ti += 1, tj += 1;
@@ -149,12 +166,12 @@ void HeavyMenuWidget::simulatedAnnealing()
         ll nf = calc_func();
         if (nf < f) {
             updateF(-nf), f = nf;
-            emit setGraphSignal(graph);
+            if (drawing) emit setGraphSignal(graph);
             return;
         }
-        if (temp != 0 && gen() / gen.max() < exp((f - nf) / temp)) {
+        if (temp != 0 && (long double)gen() / gen.max() < exp((f - nf) / temp)) {
             updateF(-nf), f = nf;
-            emit setGraphSignal(graph);
+            if (drawing) emit setGraphSignal(graph);
             return;
         }
         for(int i = 0; i < cycles[cycles_ind].size(); i++) {
@@ -169,7 +186,7 @@ void HeavyMenuWidget::simulatedAnnealing()
 void HeavyMenuWidget::on_pushButton_3_clicked()
 {
     graph = graphGenerator->buildGraph(n);
-    emit setGraphSignal(graph);
+    if (drawing) emit setGraphSignal(graph);
     f = calc_func();
     updateF(-f);
 }
@@ -177,17 +194,34 @@ void HeavyMenuWidget::on_pushButton_3_clicked()
 
 void HeavyMenuWidget::on_pushButton_2_clicked()
 {
-    if (!sa_flag) ui->pushButton_2->setText("Пауза");
-    else ui->pushButton_2->setText("Запуск");
+    if (!sa_flag) {
+        ui->pushButton_2->setText("Пауза");
+        tick = QTime::currentTime();
+    }
+    else {
+        ui->pushButton_2->setText("Запуск");
+        auto get_ms = [&](QTime tm) {
+            return (ll)tm.minute() * 60 * 1000 + (ll)tm.second() * 1000 + tm.msec();
+        };
+        qDebug() << get_ms(QTime::currentTime()) - get_ms(tick);
+    }
     sa_flag = !sa_flag;
 }
 
-void HeavyMenuWidget::on_radioButton_clicked()
+void HeavyMenuWidget::on_checkBox_stateChanged(int arg1)
 {
-    move_state = false;
+    drawing = !drawing;
+    if (!drawing) {
+        emit setGraphSignal(vector<vector<int>>());
+    }
 }
 
-void HeavyMenuWidget::on_radioButton_2_clicked()
+void HeavyMenuWidget::on_checkBox_3_stateChanged(int arg1)
 {
-    move_state = true;
+    move_1 = !move_1;
+}
+
+void HeavyMenuWidget::on_checkBox_2_stateChanged(int arg1)
+{
+    move_2 = !move_2;
 }
